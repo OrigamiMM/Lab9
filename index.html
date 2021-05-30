@@ -56,17 +56,103 @@
   </section>
 
   <script>
-    let calculateBtn = document.querySelector('#calculate');
-    calculateBtn.addEventListener('click', () => {
+    class calculationFormError extends Error{
+      constructor(message){
+        super(message);
+        this.name = "Calculation Forming Error"
+      }
+    }
+
+    function evaluateNums(firstNum, operator, secondNum){
+      if(!firstNum) {
+        throw new calculationFormError("Missing First Num");
+      }
+      if(!operator) throw new calculationFormError("Missing Operator");
+      if(!secondNum) throw new calculationFormError("Missing Second Num");
+
+      return eval(`${firstNum} ${operator} ${secondNum}`);
+    }
+
+      let calculateBtn = document.querySelector('#calculate');
+      calculateBtn.addEventListener('click', () => {
       let output = document.querySelector('output');
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      try {
+        output.innerHTML = evaluateNums(firstNum, operator, secondNum);
+      } catch (error) {
+        if(error instanceof calculationFormError){
+        console.log(error.message);
+      } 
+      }finally {
+        console.log(firstNum + " " + operator + " " + secondNum);
+      }
     });
+    
+    
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
     // TODO - Make buttons functional
+    errorBtns.forEach((button)=>{
+      button.addEventListener('click', ()=>{
+        let outputData = document.querySelector('output').innerHTML;
+        let firstNum = document.querySelector('#first-num').value;
+        let secondNum = document.querySelector('#second-num').value;
+        let operator = document.querySelector('#operator').value;
+        let buttonType = button.innerHTML;
+        const label = "Number and operations";
+        switch (buttonType) {
+          case "Console Log Demo":
+            console.log(outputData);
+            break;
+          case "Console Error Demo":
+            console.error(outputData);
+            break;
+          case "Console Dir":
+            let  json = {output: outputData, firstNumber: firstNum, secondNumber: secondNum, operator: operator}
+            console.dir(json);
+            break;
+          case "Console dirxml":
+            console.dirxml(document.querySelector('fieldset'));
+            break;
+          case "Console Group Start":
+
+            console.group(label);
+            break;
+          case "Console Group End":
+            console.groupEnd(label);
+            console.log("Outer Level")
+            break;
+          case "Console Table":
+            console.table([
+              {
+                FirstNumber: firstNum,
+                SecondNumber: secondNum,
+                Operator: operator,
+                Value: outputData
+              }
+            ]);
+            break;
+          case "Start Timer":
+            console.time();
+            break;
+          case "End Timer":
+            console.timeEnd();
+            break;
+          case "Console Trace":
+            const first = () => {anotherFunction();};
+            const anotherFunction = () => {console.trace()};
+            break;
+          case "Trigger a Global Error":
+            throw new Error("There was an error, beep boop");
+            break;
+          default:
+            break;
+        }
+      });
+    });
+
   </script>
 </body>
 </html>
