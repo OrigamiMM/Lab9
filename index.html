@@ -55,6 +55,12 @@
     <button>Trigger a Global Error</button>
   </section>
 
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+<script>
+  window.TrackJS && TrackJS.install({
+    token: "a33365da1b024dc6933cb562a9d283f8"
+  });
+</script>
   <script>
     class calculationFormError extends Error{
       constructor(message){
@@ -62,7 +68,7 @@
         this.name = "Calculation Forming Error"
       }
     }
-
+    TrackJS.track('Testing TrackJS!');
     function evaluateNums(firstNum, operator, secondNum){
       if(!firstNum) {
         throw new calculationFormError("Missing First Num");
@@ -122,7 +128,7 @@
             break;
           case "Console Group End":
             console.groupEnd(label);
-            console.log("Outer Level")
+            console.log("Outer Level");
             break;
           case "Console Table":
             console.table([
@@ -153,6 +159,11 @@
       });
     });
 
+    window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+      console.log('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber + ' Column: ' + column + ' StackTrace: ' +  errorObj);
+    }
+    window.onerror();
+    
   </script>
 </body>
 </html>
